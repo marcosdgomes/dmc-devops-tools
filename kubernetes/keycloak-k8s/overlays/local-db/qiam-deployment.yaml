@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qiam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qiam
+  template:
+    metadata:
+      labels:
+        app: qiam
+    spec:
+      containers:
+      - name: qiam
+        image: registry.konneqt.io/qap-ee:kubernetes-2.0.0
+        args:
+        - start-dev
+        - --http-enabled=true
+        - --proxy-headers=forwarded
+        - --hostname=https://qiam-dev.k8s.konneqt.cloud
+        - --hostname-strict=true
+        - --spi-theme-default=qiam-v2
+        - --spi-theme-welcome-theme=qiam-v2
+        - --spi-theme-login-theme=qiam-v2
+        - --spi-theme-account-theme=qiam-v2
+        - --spi-theme-admin-theme=qiam-v2
+        - --spi-theme-email-theme=qiam-v2
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: KC_DB
+          valueFrom:
+            configMapKeyRef:
+              name: qiam-config
+              key: KC_DB
+        - name: KC_DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: qiam-config
+              key: KC_DB_URL
+        - name: KC_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: qiam-secret
+              key: KC_DB_USERNAME
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qiam-secret
+              key: KC_DB_PASSWORD
+        - name: KC_DB_SCHEMA
+          valueFrom:
+            configMapKeyRef:
+              name: qiam-config
+              key: KC_DB_SCHEMA
+        - name: KC_BOOTSTRAP_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: qiam-secret
+              key: KC_BOOTSTRAP_ADMIN_USERNAME
+        - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qiam-secret
+              key: KC_BOOTSTRAP_ADMIN_PASSWORD

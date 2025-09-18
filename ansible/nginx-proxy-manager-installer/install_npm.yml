@@ -1,0 +1,40 @@
+---
+- name: Install Nginx Proxy Manager
+  hosts: servers
+  become: yes
+  tasks:
+    - name: 1. Create directories for NPM data and letsencrypt certs
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ npm_config_path }}/data"
+        - "{{ npm_config_path }}/letsencrypt"
+
+    - name: 2. Deploy Nginx Proxy Manager container
+      docker_container:
+        name: npm
+        image: 'jc21/nginx-proxy-manager:latest'
+        restart_policy: unless-stopped
+        ports:
+          - "80:80"
+          - "443:443"
+          - "81:81"
+        volumes:
+          - "{{ npm_config_path }}/data:/data"
+          - "{{ npm_config_path }}/letsencrypt:/etc/letsencrypt"
+
+    - name: 3. Allow required ports through UFW firewall
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - "80"
+        - "443"
+        - "81"
+
+    - name: Print final status message
+      debug:
+        msg: "SUCCESS! Nginx Proxy Manager is running. Access the admin UI at http://{{ ansible_host }}:81"

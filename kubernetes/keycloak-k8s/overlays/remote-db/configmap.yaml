@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qiam-config
+data:
+  KC_DB: "postgres"
+  KC_DB_URL: "jdbc:postgresql://ip_address:5432/qiam_dev_db"
+  KC_HOSTNAME: "qiam-dev.k8s.konneqt.cloud"
+  KC_DB_SCHEMA: "public"

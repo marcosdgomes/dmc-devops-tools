@@ -1,0 +1,48 @@
+# Arquivo: meus-valores.yaml
+
+# --- 1. Acesso Externo ---
+# Define como o Harbor será acessado de fora do cluster.
+expose:
+  type: ingress
+  ingress:
+    # Substitua pelo seu domínio real.
+    hosts:
+      core: harbor.k8s.konneqt.cloud
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt"
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+
+externalURL: https://harbor.k8s.konneqt.cloud
+
+# --- 2. Banco de Dados Externo ---
+# Configura o Harbor para usar seu Cloud SQL.
+database:
+  type: external
+  external:
+    # Substitua com os dados do seu Cloud SQL.
+    host: "ip" 
+    port: 5432
+    username: "harbor_us"
+    coreDatabase: "harbor_prd_db"
+    sslmode: "require"
+    # Aponta para o Secret do K8s com a senha do banco.
+    existingSecret: "harbor-db-secret"
+
+# --- 3. Redis Externo (Boa Prática para Produção) ---
+# Se você também tiver um Redis externo, descomente e configure.
+# Se não, pode apagar ou deixar comentado, e o Harbor usará o interno.
+# redis:
+#   type: external
+#   external:
+#     addr: "endereco.do.seu.redis.com:6379"
+
+# --- 4. Armazenamento de Imagens no Google Cloud Storage ---
+persistence:
+  imageChartStorage:
+    type: gcs
+    gcs:
+      # Substitua pelo nome do seu bucket.
+      bucket: "harbor-storage-prd-001"
+      # Aponta para o Secret do K8s com a chave do Service Account.
+      existingSecret: "harbor-gcs-secret"

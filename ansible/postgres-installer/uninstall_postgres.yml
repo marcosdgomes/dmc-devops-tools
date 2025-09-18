@@ -1,0 +1,35 @@
+---
+- name: Completely Uninstall PostgreSQL from Host
+  hosts: servers
+  become: yes
+  tasks:
+    - name: 1. Stop and disable the PostgreSQL service
+      service:
+        name: postgresql
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: 2. Purge PostgreSQL packages and configuration files
+      apt:
+        name:
+          - postgresql
+          - postgresql-contrib
+        state: absent
+        purge: yes
+        autoremove: yes
+
+    - name: 3. DANGER - Remove the PostgreSQL data directory
+      file:
+        path: /var/lib/postgresql
+        state: absent
+
+    - name: 4. Ensure firewall rule for port 5432 is removed
+      ufw:
+        rule: deny
+        port: "5432"
+        proto: tcp
+
+    - name: Print final status message
+      debug:
+        msg: "SUCCESS! PostgreSQL has been completely removed from the host."

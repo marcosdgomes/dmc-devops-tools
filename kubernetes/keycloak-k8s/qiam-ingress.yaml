@@ -1,0 +1,27 @@
+# kubernetes/qiam-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qiam
+  namespace: qiam-ee-dev
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: [qiam-dev.k8s.konneqt.cloud]
+      secretName: qiam-tls
+  rules:
+    - host: qiam-dev.k8s.konneqt.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: qiam
+                port:
+                  number: 8080

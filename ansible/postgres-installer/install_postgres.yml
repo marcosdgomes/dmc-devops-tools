@@ -1,0 +1,76 @@
+---
+- name: Install and Manage PostgreSQL for Development
+  hosts: servers
+  become: yes
+  vars_files:
+    # Load the variables from the encrypted file with the Vault
+    - vars/secrets.yml
+  vars:
+    postgres_conf_path: "/etc/postgresql/16/main"
+    docker_network_cidr: "172.17.0.0/16" # Default Docker network CIDR
+
+  tasks:
+    - name: 1. Install PostgreSQL and dependencies
+      apt:
+        name:
+          - postgresql
+          - postgresql-contrib
+          - python3-psycopg2
+        state: present
+        update_cache: yes
+
+    - name: 2. Ensure PostgreSQL service is started and enabled
+      service:
+        name: postgresql
+        state: started
+        enabled: yes
+
+    - name: 3. Create databases from the list
+      community.postgresql.postgresql_db:
+        name: "{{ item.name }}"
+      become_user: postgres
+      loop: "{{ postgres_databases }}"
+
+    - name: 4. Create users for the databases
+      community.postgresql.postgresql_user:
+        name: "{{ item.user }}"
+        password: "{{ item.pass }}"
+      become_user: postgres
+      loop: "{{ postgres_databases }}"
+      no_log: true
+
+    - name: 5. Grant all privileges on each database to its respective user
+      community.postgresql.postgresql_privs:
+        db: "{{ item.name }}"
+        privs: ALL
+        type: database
+        roles: "{{ item.user }}"
+      become_user: postgres
+      loop: "{{ postgres_databases }}"
+
+    - name: 6. Configure postgresql.conf to listen on all addresses
+      lineinfile:
+        path: "{{ postgres_conf_path }}/postgresql.conf"
+        regexp: "^#?listen_addresses = 'localhost'"
+        line: "listen_addresses = '*'"
+        backup: yes
+      notify: Restart postgresql
+
+    - name: 7. Configure pg_hba.conf to allow connections from Docker network
+      lineinfile:
+        path: "{{ postgres_conf_path }}/pg_hba.conf"
+        line: "host    all    all    {{ docker_network_cidr }}    md5"
+        backup: yes
+      notify: Restart postgresql
+    
+    - name: 8. Allow PostgreSQL port through UFW firewall
+      ufw:
+        rule: allow
+        port: "5432"
+        proto: tcp
+
+  handlers:
+    - name: Restart postgresql
+      service:
+        name: postgresql
+        state: restarted
