@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: qiam
+  name: keycloak
 spec:
   selector:
-    app: qiam
+    app: keycloak
   ports:
   - name: http
     port: 8080

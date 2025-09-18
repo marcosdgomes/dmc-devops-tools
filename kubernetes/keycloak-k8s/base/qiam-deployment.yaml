@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qiam
+  name: keycloak
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: qiam
+      app: keycloak
   template:
     metadata:
       labels:
-        app: qiam
+        app: keycloak
     spec:
       containers:
-      - name: qiam
-        image: registry.konneqt.io/qap-ee:kubernetes-2.0.0
+      - name: keycloak
+        image: registry.dmc-it-solutions.io/qap-ee:kubernetes-2.0.0
         args:
         - start-dev
         - --http-enabled=true
         - --proxy-headers=forwarded
-        - --hostname=https://qiam-dev.k8s.konneqt.cloud
+        - --hostname=https://keycloak-dev.k8s.dmc-it-solutions.cloud
         - --hostname-strict=true
-        - --spi-theme-default=corp-konneqt-login
-        - --spi-theme-welcome-theme=corp-konneqt-login
-        - --spi-theme-login-theme=corp-konneqt-login
-        - --spi-theme-account-theme=corp-konneqt-account
-        - --spi-theme-admin-theme=corp-konneqt-admin
-        - --spi-theme-email-theme=corp-qiam-email
+        - --spi-theme-default=corp-dmc-it-solutions-login
+        - --spi-theme-welcome-theme=corp-dmc-it-solutions-login
+        - --spi-theme-login-theme=corp-dmc-it-solutions-login
+        - --spi-theme-account-theme=corp-dmc-it-solutions-account
+        - --spi-theme-admin-theme=corp-dmc-it-solutions-admin
+        - --spi-theme-email-theme=corp-keycloak-email
         ports:
         - containerPort: 8080
           name: http
@@ -34,35 +34,35 @@ spec:
         - name: KC_DB
           valueFrom:
             configMapKeyRef:
-              name: qiam-config
+              name: keycloak-config
               key: KC_DB
         - name: KC_DB_URL
           valueFrom:
             configMapKeyRef:
-              name: qiam-config
+              name: keycloak-config
               key: KC_DB_URL
         - name: KC_DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: qiam-secret
+              name: keycloak-secret
               key: KC_DB_USERNAME
         - name: KC_DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: qiam-secret
+              name: keycloak-secret
               key: KC_DB_PASSWORD
         - name: KC_DB_SCHEMA
           valueFrom:
             configMapKeyRef:
-              name: qiam-config
+              name: keycloak-config
               key: KC_DB_SCHEMA
         - name: KC_BOOTSTRAP_ADMIN_USERNAME
           valueFrom:
             secretKeyRef:
-              name: qiam-secret
+              name: keycloak-secret
               key: KC_BOOTSTRAP_ADMIN_USERNAME
         - name: KC_BOOTSTRAP_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: qiam-secret
+              name: keycloak-secret
               key: KC_BOOTSTRAP_ADMIN_PASSWORD

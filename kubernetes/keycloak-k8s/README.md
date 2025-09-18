@@ -1,14 +1,14 @@
-# QIAM Kubernetes Manifests
+# keycloak Kubernetes Manifests
 
-Este diretório contém os manifestos Kubernetes para o QIAM, usando Kustomize para gerenciar diferentes ambientes.
+Este diretório contém os manifestos Kubernetes para o keycloak, usando Kustomize para gerenciar diferentes ambientes.
 
 ## Estrutura
 
 ```
 kubernetes/
 ├── base/                      # Configurações base
-│   ├── qiam-deployment.yaml   # Deployment do QIAM
-│   ├── qiam-service.yaml      # Service do QIAM
+│   ├── keycloak-deployment.yaml   # Deployment do keycloak
+│   ├── keycloak-service.yaml      # Service do keycloak
 │   └── kustomization.yaml     # Kustomization base
 ├── overlays/                  # Variantes de configuração
 │   ├── local-db/             # Configuração com banco local
@@ -33,14 +33,14 @@ kubernetes/
 kubectl create namespace <your_namespace>
 
 ### Registre o docker registry para o namespace
-kubectl -n qiam-ee-poc create secret docker-registry regcred \
-  --docker-server=registry.konneqt.io \
+kubectl -n keycloak-ee-poc create secret docker-registry regcred \
+  --docker-server=registry.dmc-it-solutions.io \
   --docker-username='<USUARIO>' \
   --docker-password='<SENHA>' \
-  --docker-email='marcos@konneqt.io'
+  --docker-email='marcos@dmc-it-solutions.io'
 
 ### Aplique ao namespace
-kubectl -n qiam-ee-poc patch deploy qiam \
+kubectl -n keycloak-ee-poc patch deploy keycloak \
   -p '{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"regcred"}]}}}}'
 
 # Aplicar configuração com banco local
@@ -65,10 +65,10 @@ kubectl apply -k overlays/local-db
    kubectl apply -k overlays/remote-db
    ```
 
-## Acessando o QIAM
+## Acessando o keycloak
 
-- HTTP: `http://qiam.local:8080`
-- HTTPS: `https://qiam.local:8443`
+- HTTP: `http://keycloak.local:8080`
+- HTTPS: `https://keycloak.local:8443`
 
 ## Configurações
 
@@ -78,7 +78,7 @@ kubectl apply -k overlays/local-db
 - Senha: `keycloak`
 - URL: `jdbc:postgresql://postgres:5432/keycloak`
 
-### Admin QIAM
+### Admin keycloak
 - Usuário: `admin`
 - Senha: `admin`
 

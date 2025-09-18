@@ -1,9 +1,9 @@
-# kubernetes/qiam-ingress.yaml
+# kubernetes/keycloak-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: qiam
-  namespace: qiam-ee-dev
+  name: keycloak
+  namespace: keycloak-ee-dev
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -12,16 +12,16 @@ metadata:
 spec:
   ingressClassName: traefik
   tls:
-    - hosts: [qiam-dev.k8s.konneqt.cloud]
-      secretName: qiam-tls
+    - hosts: [keycloak-dev.k8s.dmc-it-solutions.cloud]
+      secretName: keycloak-tls
   rules:
-    - host: qiam-dev.k8s.konneqt.cloud
+    - host: keycloak-dev.k8s.dmc-it-solutions.cloud
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: qiam
+                name: keycloak
                 port:
                   number: 8080

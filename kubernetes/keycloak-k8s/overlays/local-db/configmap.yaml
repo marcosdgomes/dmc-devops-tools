@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: qiam-config
+  name: keycloak-config
 data:
   KC_DB: "postgres"
   KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
-  KC_HOSTNAME: "qiam-dev.k8s.konneqt.cloud"
+  KC_HOSTNAME: "keycloak-dev.k8s.dmc-it-solutions.cloud"
   KC_DB_SCHEMA: "public"
 ---
 apiVersion: v1

@@ -1,6 +1,6 @@
 # Automação & DevOps: Um Toolkit Prático para implementar
 
-> Este repositório é aberto a comunidade. É uma coleção de códigos e "starter kits" de Infraestrutura como Código (IaC) e Automação de Testes, focados em soluções reutilizáveis.
+> Este repositório aberto a comunidade, é uma coleção de códigos e "starter kits" de Infraestrutura como Código (IaC) e Automação de Testes, focados em soluções reutilizáveis.
 
 ### Estrutura do Repositório
 

@@ -11,10 +11,10 @@ spec:
 
   tls:
     - hosts:
-      - harbor.k8s.konneqt.cloud
+      - harbor.k8s.dmc-it-solutions.cloud
       secretName: harbor-ingress-tls
   rules:
-    - host: harbor.k8s.konneqt.cloud
+    - host: harbor.k8s.dmc-it-solutions.cloud
       http:
         paths:
           - path: /

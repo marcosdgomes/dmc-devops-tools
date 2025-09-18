@@ -7,13 +7,13 @@ expose:
   ingress:
     # Substitua pelo seu domínio real.
     hosts:
-      core: harbor.k8s.konneqt.cloud
+      core: harbor.k8s.dmc-it-solutions.cloud
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt"
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
 
-externalURL: https://harbor.k8s.konneqt.cloud
+externalURL: https://harbor.k8s.dmc-it-solutions.cloud
 
 # --- 2. Banco de Dados Externo ---
 # Configura o Harbor para usar seu Cloud SQL.
