@@ -8,16 +8,26 @@
     app_network_name: "app_network"
 
   tasks:
-    - name: Ensure the shared application network exists
+    - name: 1. Install prerequisites for Ansible Docker modules
+      apt:
+        name:
+          - python3-pip
+          - python3-docker # <-- ADICIONADO AQUI
+        state: present
+        update_cache: yes
+
+    # A TAREFA DE 'pip' FOI REMOVIDA DAQUI
+
+    - name: 2. Ensure the shared application network exists
       community.docker.docker_network:
         name: "{{ app_network_name }}"
         state: present
 
-    - name: Create a persistent volume for n8n config files
+    - name: 3. Create a persistent volume for n8n config files
       community.docker.docker_volume:
         name: n8n_data
 
-    - name: Deploy the n8n container
+    - name: 4. Deploy the n8n container
       community.docker.docker_container:
         name: n8n
         image: "docker.n8n.io/n8nio/n8n:latest"
@@ -39,9 +49,13 @@
           TZ: "{{ n8n_timezone }}"
           N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
           N8N_RUNNERS_ENABLED: "true"
+          N8N_PROTOCOL: "https"
+          N8N_HOST: "{{ n8n_host }}"
+          N8N_EDITOR_BASE_URL: "{{ n8n_host }}"
+          WEBHOOK_TUNNEL_URL: "{{ n8n_host }}"
       no_log: true
 
-    - name: Allow n8n port through UFW firewall
+    - name: 5. Allow n8n port through UFW firewall
       ufw:
         rule: allow
         port: "5678"

@@ -71,7 +71,20 @@
       loop: "{{ postgres_databases }}"
       no_log: true
 
-    - name: 8. Allow PostgreSQL port through UFW firewall
+    - name: 8. Grant schema-level privileges to application users
+      community.postgresql.postgresql_privs:
+        db: "{{ item.name }}"
+        roles: "{{ item.user }}"
+        privs: "CREATE,USAGE"
+        type: schema
+        objs: public
+        login_host: "localhost"
+        login_user: postgres
+        login_password: "{{ postgres_root_password }}"
+      loop: "{{ postgres_databases }}"
+      no_log: true
+
+    - name: 9. Allow PostgreSQL port through UFW firewall
       ufw:
         rule: allow
         port: "5432"
